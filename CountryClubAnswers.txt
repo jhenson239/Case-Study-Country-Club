@@ -87,7 +87,8 @@ different costs to members (the listed costs are per half-hour 'slot'), and
 the guest user's ID is always 0. Include in your output the name of the
 facility, the name of the member formatted as a single column, and the cost.
 Order by descending cost, and do not use any subqueries. */
-SELECT Bookings.starttime, Facilities.membercost,Facilities.guestcost,Facilities.name, Members.firstname, Members.surname
+
+SELECT Bookings.starttime, Facilities.membercost,Facilities.guestcost,Facilities.name, CONCAT(Members.firstname, ' ', Members.surname) AS full_name
 FROM Bookings, Facilities, Members
 WHERE Bookings.starttime LIKE '2012-09-14%'
 AND Facilities.guestcost > 30 OR Facilities.membercost > 30
@@ -95,6 +96,18 @@ ORDER BY guestcost
 
 
 /* Q9: This time, produce the same result as in Q8, but using a subquery. */
+SELECT b.memid,
+       b.starttime,
+       b.slots,
+       CONCAT(m.firstname, ' ', m.surname) AS full_name,
+       f.membercost,
+       f.guestcost
+FROM Bookings AS b
+LEFT JOIN Members AS m ON b.memid = m.memid
+LEFT JOIN Facilities AS f ON b.facid = f.facid
+WHERE b.starttime LIKE '2012-09-14%'
+	AND (f.membercost > 30 OR f.guestcost > 30)
+ORDER BY f.membercost, f.guestcost
 
 
 /* PART 2: SQLite
